@@ -8,8 +8,8 @@ use libc::c_void;
 
 #[link(name = "ole32")]
 extern "system" {
-    pub fn CoInitializeEx(reserved: *const c_void, coinit: COINIT) -> HRESULT;
-    pub fn CoUninitialize();
+    fn CoInitializeEx(reserved: *const c_void, coinit: COINIT) -> HRESULT;
+    fn CoUninitialize();
 
     fn CoCreateInstance(clsid: *const CLSID,
                         unk_outer: RawComPtr,
@@ -17,6 +17,22 @@ extern "system" {
                         iid: *const IID,
                         v: *mut RawComPtr)
                         -> HRESULT;
+}
+
+pub struct Com(u32);
+
+pub unsafe fn com_initialize() -> Result<Com> {
+    let rc = CoInitializeEx(ptr::null(), COINIT_MULTITHREADED);
+    try!(rc.result());
+    Ok(Com(0))
+}
+
+impl Drop for Com {
+    fn drop(&mut self) {
+        unsafe {
+            CoUninitialize();
+        }
+    }
 }
 
 pub unsafe fn raw_to_comptr<T: ComInterface>(ptr: RawComPtr, owned: bool) -> ComPtr<T> {

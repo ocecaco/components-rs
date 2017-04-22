@@ -62,6 +62,12 @@ impl HRESULT {
     }
 }
 
+impl fmt::Display for HRESULT {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "HRESULT(0x{:08x})", self.0)
+    }
+}
+
 pub type BOOL = i32;
 
 pub type HWND = *const c_void;

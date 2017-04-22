@@ -21,12 +21,12 @@ pub use types::*;
 pub use comutil::*;
 pub use iunknown::*;
 
-mod errors {
+pub mod errors {
     error_chain! {
         errors {
             ComCallFailed(result: ::HRESULT) {
                 description("COM call failed")
-                display("COM call failed: returned HRESULT(0x{:08x})", result.0)
+                display("COM call failed: returned {}", result)
             }
         }
     }
