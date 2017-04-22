@@ -1,6 +1,7 @@
 use types::*;
 use comptr::ComPtr;
 use iunknown::{IUnknown, ComInterface};
+use errors::*;
 
 use std::ptr;
 use libc::c_void;
@@ -27,11 +28,10 @@ pub unsafe fn raw_to_comptr<T: ComInterface>(ptr: RawComPtr, owned: bool) -> Com
     result
 }
 
-// TODO: Ensure initialization has been called
 pub fn create_instance<U>(clsid: &CLSID,
                           unk_outer: Option<&IUnknown>,
                           cls_context: CLSCTX)
-                          -> Option<ComPtr<U>>
+                          -> Result<ComPtr<U>>
     where U: ComInterface
 {
     let mut ptr: RawComPtr = ptr::null();
@@ -40,24 +40,20 @@ pub fn create_instance<U>(clsid: &CLSID,
     } else {
         ptr::null()
     };
-    let result =
+    let rc =
         unsafe { CoCreateInstance(clsid, outer as RawComPtr, cls_context, &U::iid(), &mut ptr) };
 
-    if result.0 != 0 {
-        None
-    } else {
-        unsafe { Some(raw_to_comptr(ptr, true)) }
-    }
+    try!(rc.result());
+
+    unsafe { Ok(raw_to_comptr(ptr, true)) }
 }
 
-pub fn query_interface<U: ComInterface>(unk: &IUnknown) -> Option<ComPtr<U>> {
+pub fn query_interface<U: ComInterface>(unk: &IUnknown) -> Result<ComPtr<U>> {
     let mut ptr: RawComPtr = ptr::null();
 
-    let result = unsafe { unk.query_interface(&U::iid(), &mut ptr) };
+    let rc = unsafe { unk.query_interface(&U::iid(), &mut ptr) };
 
-    if result.0 != 0 {
-        None
-    } else {
-        unsafe { Some(raw_to_comptr(ptr, true)) }
-    }
+    try!(rc.result());
+
+    unsafe { Ok(raw_to_comptr(ptr, true)) }
 }

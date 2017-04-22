@@ -2,6 +2,7 @@
 
 use libc::c_void;
 use std::fmt;
+use errors::*;
 
 bitflags! {
     #[repr(C)]
@@ -47,8 +48,19 @@ bitflags! {
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 #[repr(C)]
 pub struct HRESULT(pub u32);
+pub const S_OK: HRESULT = HRESULT(0);
 pub const E_NOINTERFACE: HRESULT = HRESULT(0x80004002);
 pub const E_POINTER: HRESULT = HRESULT(0x80004003);
+
+impl HRESULT {
+    pub fn result(&self) -> Result<()> {
+        if *self == S_OK {
+            Ok(())
+        } else {
+            Err(ErrorKind::ComCallFailed(*self).into())
+        }
+    }
+}
 
 pub type BOOL = i32;
 
