@@ -2,6 +2,7 @@ use types::*;
 use comptr::ComPtr;
 use iunknown::{IUnknown, ComInterface};
 use errors::*;
+use std::cell::RefCell;
 
 use std::ptr;
 use libc::c_void;
@@ -19,12 +20,31 @@ extern "system" {
                         -> HRESULT;
 }
 
-pub struct Com(u32);
+thread_local! {
+    static COM_HANDLE: RefCell<Option<Com>> = RefCell::new(None);
+}
 
-pub unsafe fn com_initialize() -> Result<Com> {
-    let rc = CoInitializeEx(ptr::null(), COINIT_MULTITHREADED);
+struct Com;
+
+pub fn com_initialize() -> Result<()> {
+    let already_initialized = COM_HANDLE.with(|handle| {
+        let h = handle.borrow();
+        h.is_some()
+    });
+
+    if already_initialized {
+        return Ok(());
+    }
+
+    let rc = unsafe { CoInitializeEx(ptr::null(), COINIT_MULTITHREADED) };
     try!(rc.result());
-    Ok(Com(0))
+
+    COM_HANDLE.with(|handle| {
+        let mut h = handle.borrow_mut();
+        *h = Some(Com);
+    });
+
+    Ok(())
 }
 
 impl Drop for Com {
