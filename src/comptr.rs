@@ -46,3 +46,4 @@ impl<T: ComInterface> Clone for ComPtr<T> {
 }
 
 unsafe impl<T: ComInterface> Send for ComPtr<T> {}
+unsafe impl<T: ComInterface> Sync for ComPtr<T> {}

@@ -52,6 +52,9 @@ impl IUnknown {
     }
 }
 
+unsafe impl Send for IUnknown {}
+unsafe impl Sync for IUnknown {}
+
 unsafe impl ComInterface for IUnknown {
     type Vtable = IUnknownVtable;
 
@@ -67,7 +70,7 @@ impl AsRef<IUnknown> for IUnknown {
 }
 
 // unsafe to implement because it implies the type can safely be cast to IUnknown
-pub unsafe trait ComInterface: AsRef<IUnknown> {
+pub unsafe trait ComInterface: AsRef<IUnknown> + Send + Sync {
     type Vtable: Copy + Clone;
 
     fn iid() -> IID;

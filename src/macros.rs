@@ -101,6 +101,9 @@ macro_rules! com_interface {
         }
         )*
 
+        unsafe impl ::std::marker::Send for $iface {}
+        unsafe impl ::std::marker::Sync for $iface {}
+
         unsafe impl $crate::ComInterface for $iface {
             #[doc(hidden)]
             type Vtable = $vtable;
