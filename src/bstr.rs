@@ -1,4 +1,4 @@
-use std::ptr;
+use std::marker::PhantomData;
 
 #[link(name = "oleaut32")]
 extern "system" {
@@ -11,19 +11,14 @@ pub struct BString {
 }
 
 #[repr(C)]
-pub struct BStr {
+pub struct BStr<'a> {
     ptr: *const u16,
+    phantom: PhantomData<&'a u16>
 }
 
 impl BString {
-    pub fn as_ref(&self) -> BStr {
-        BStr { ptr: self.ptr }
-    }
-}
-
-impl BStr {
-    pub fn null() -> Self {
-        BStr { ptr: ptr::null() }
+    pub fn as_ref<'a>(&'a self) -> BStr<'a> {
+        BStr { ptr: self.ptr, phantom: PhantomData }
     }
 }
 

@@ -2,7 +2,6 @@ use types::*;
 use comptr::ComPtr;
 use iunknown::{IUnknown, ComInterface};
 use errors::*;
-use std::cell::RefCell;
 
 use std::ptr;
 use libc::c_void;
@@ -10,7 +9,7 @@ use libc::c_void;
 #[link(name = "ole32")]
 extern "system" {
     fn CoInitializeEx(reserved: *const c_void, coinit: COINIT) -> HRESULT;
-    fn CoUninitialize();
+    // fn CoUninitialize();
 
     fn CoCreateInstance(clsid: *const CLSID,
                         unk_outer: RawComPtr,
@@ -18,41 +17,19 @@ extern "system" {
                         iid: *const IID,
                         v: *mut RawComPtr)
                         -> HRESULT;
-}
 
-thread_local! {
-    static COM_HANDLE: RefCell<Option<Com>> = RefCell::new(None);
+    fn CoTaskMemFree(ptr: *const c_void);
 }
-
-struct Com;
 
 pub fn com_initialize() -> Result<()> {
-    let already_initialized = COM_HANDLE.with(|handle| {
-        let h = handle.borrow();
-        h.is_some()
-    });
-
-    if already_initialized {
-        return Ok(());
-    }
-
     let rc = unsafe { CoInitializeEx(ptr::null(), COINIT_MULTITHREADED) };
     try!(rc.result());
-
-    COM_HANDLE.with(|handle| {
-        let mut h = handle.borrow_mut();
-        *h = Some(Com);
-    });
 
     Ok(())
 }
 
-impl Drop for Com {
-    fn drop(&mut self) {
-        unsafe {
-            CoUninitialize();
-        }
-    }
+pub unsafe fn com_memory_free(ptr: *const c_void) {
+    CoTaskMemFree(ptr)
 }
 
 pub unsafe fn raw_to_comptr<T: ComInterface>(ptr: RawComPtr, owned: bool) -> ComPtr<T> {
