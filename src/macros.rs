@@ -250,7 +250,6 @@ macro_rules! handle_functions {
     ) => {
         $(
             extern "stdcall" fn $func(this: *const $iface $(, $i: $t)*) -> $rt {
-                #[allow(zero_ptr)]
                 let this = (this as usize - offset_of!($cls, $field)) as *const $cls;
                 let this = unsafe { &*this };
 
