@@ -11,6 +11,7 @@ pub struct BString {
 }
 
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct BStr<'a> {
     ptr: *const u16,
     phantom: PhantomData<&'a u16>
