@@ -17,9 +17,9 @@ mod types;
 mod comutil;
 mod iunknown;
 
-pub use types::*;
 pub use comutil::*;
 pub use iunknown::*;
+pub use types::*;
 
 pub mod errors {
     error_chain! {

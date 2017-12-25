@@ -14,12 +14,15 @@ pub struct BString {
 #[derive(Copy, Clone)]
 pub struct BStr<'a> {
     ptr: *const u16,
-    phantom: PhantomData<&'a u16>
+    phantom: PhantomData<&'a u16>,
 }
 
 impl BString {
     pub fn as_ref<'a>(&'a self) -> BStr<'a> {
-        BStr { ptr: self.ptr, phantom: PhantomData }
+        BStr {
+            ptr: self.ptr,
+            phantom: PhantomData,
+        }
     }
 }
 

@@ -1,22 +1,22 @@
-use types::*;
 use comptr::ComPtr;
-use iunknown::{IUnknown, ComInterface};
 use errors::*;
-
-use std::ptr;
+use iunknown::{ComInterface, IUnknown};
 use libc::c_void;
+use std::ptr;
+use types::*;
 
 #[link(name = "ole32")]
 extern "system" {
     fn CoInitializeEx(reserved: *const c_void, coinit: COINIT) -> HRESULT;
     // fn CoUninitialize();
 
-    fn CoCreateInstance(clsid: *const CLSID,
-                        unk_outer: RawComPtr,
-                        cls_context: CLSCTX,
-                        iid: *const IID,
-                        v: *mut RawComPtr)
-                        -> HRESULT;
+    fn CoCreateInstance(
+        clsid: *const CLSID,
+        unk_outer: RawComPtr,
+        cls_context: CLSCTX,
+        iid: *const IID,
+        v: *mut RawComPtr,
+    ) -> HRESULT;
 
     fn CoTaskMemFree(ptr: *const c_void);
 }
@@ -36,16 +36,18 @@ pub unsafe fn raw_to_comptr<T: ComInterface>(ptr: RawComPtr, owned: bool) -> Com
     let interface_ptr: *const T = ptr as *const T;
     let result = ComPtr::from_raw(interface_ptr);
     if !owned {
-        result.as_ref().add_ref();
+        result.iunknown().add_ref();
     }
     result
 }
 
-pub fn create_instance<U>(clsid: &CLSID,
-                          unk_outer: Option<&IUnknown>,
-                          cls_context: CLSCTX)
-                          -> Result<ComPtr<U>>
-    where U: ComInterface
+pub fn create_instance<U>(
+    clsid: &CLSID,
+    unk_outer: Option<&IUnknown>,
+    cls_context: CLSCTX,
+) -> Result<ComPtr<U>>
+where
+    U: ComInterface,
 {
     let mut ptr: RawComPtr = ptr::null();
     let outer: *const IUnknown = if let Some(x) = unk_outer {
@@ -55,16 +57,6 @@ pub fn create_instance<U>(clsid: &CLSID,
     };
     let rc =
         unsafe { CoCreateInstance(clsid, outer as RawComPtr, cls_context, &U::iid(), &mut ptr) };
-
-    try!(rc.result());
-
-    unsafe { Ok(raw_to_comptr(ptr, true)) }
-}
-
-pub fn query_interface<U: ComInterface>(unk: &IUnknown) -> Result<ComPtr<U>> {
-    let mut ptr: RawComPtr = ptr::null();
-
-    let rc = unsafe { unk.query_interface(&U::iid(), &mut ptr) };
 
     try!(rc.result());
 

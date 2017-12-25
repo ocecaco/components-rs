@@ -59,38 +59,14 @@ macro_rules! com_interface {
             })*
         }
 
-        impl ::std::ops::Deref for $iface {
+        impl $crate::Upcast for $iface {
             type Target = $base_iface;
-            fn deref(&self) -> &$base_iface {
+            fn upcast(&self) -> &Self::Target {
                 unsafe {
                     &*(self as *const $iface as *const $base_iface)
                 }
             }
         }
-
-        impl ::std::convert::AsRef<$iface> for $iface {
-            fn as_ref(&self) -> &$iface {
-                self
-            }
-        }
-
-        impl ::std::convert::AsRef<$base_iface> for $iface {
-            fn as_ref(&self) -> &$base_iface {
-                unsafe {
-                    &*(self as *const $iface as *const $base_iface)
-                }
-            }
-        }
-
-        $(
-        impl ::std::convert::AsRef<$extra_iface> for $iface {
-            fn as_ref(&self) -> &$extra_iface {
-                unsafe {
-                    &*(self as *const $iface as *const $extra_iface)
-                }
-            }
-        }
-        )*
 
         unsafe impl ::std::marker::Send for $iface {}
         unsafe impl ::std::marker::Sync for $iface {}

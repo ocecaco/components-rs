@@ -1,8 +1,8 @@
 #![allow(non_camel_case_types)]
 
+use errors::*;
 use libc::c_void;
 use std::fmt;
-use errors::*;
 
 bitflags! {
     #[repr(C)]
@@ -85,19 +85,21 @@ pub struct GUID {
 
 impl fmt::Display for GUID {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f,
-               "{:08x}-{:04x}-{:04x}-{:02x}{:02x}-{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}",
-               self.data1,
-               self.data2,
-               self.data3,
-               self.data4[0],
-               self.data4[1],
-               self.data4[2],
-               self.data4[3],
-               self.data4[4],
-               self.data4[5],
-               self.data4[6],
-               self.data4[7])
+        write!(
+            f,
+            "{:08x}-{:04x}-{:04x}-{:02x}{:02x}-{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}",
+            self.data1,
+            self.data2,
+            self.data3,
+            self.data4[0],
+            self.data4[1],
+            self.data4[2],
+            self.data4[3],
+            self.data4[4],
+            self.data4[5],
+            self.data4[6],
+            self.data4[7]
+        )
     }
 }
 

@@ -8,7 +8,6 @@ pub struct ComPtr<T: ComInterface> {
 
 impl<T: ComInterface> ComPtr<T> {
     pub unsafe fn from_raw(instance: *const T) -> ComPtr<T> {
-        // TODO: check if pointer is null
         ComPtr { instance: instance }
     }
 }
@@ -19,7 +18,7 @@ impl<T: ComInterface> Drop for ComPtr<T> {
         if !self.instance.is_null() {
             self.instance = ptr::null();
             unsafe {
-                let unk = (&*temp).as_ref();
+                let unk = (&*temp).iunknown();
                 unk.release();
             }
         }
@@ -36,12 +35,14 @@ impl<T: ComInterface> Deref for ComPtr<T> {
 
 impl<T: ComInterface> Clone for ComPtr<T> {
     fn clone(&self) -> Self {
-        let unk = self.as_ref();
+        let unk = self.iunknown();
         unsafe {
             unk.add_ref();
         }
 
-        ComPtr { instance: self.instance }
+        ComPtr {
+            instance: self.instance,
+        }
     }
 }
 

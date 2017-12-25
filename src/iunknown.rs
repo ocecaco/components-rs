@@ -1,16 +1,22 @@
+use comptr::*;
+use comutil::*;
+use errors::*;
+use std::ptr;
 use types::*;
 
-define_guid!(IID_IUnknown = 0x00000000,
-             0x0000,
-             0x0000,
-             0xC0,
-             0x00,
-             0x00,
-             0x00,
-             0x00,
-             0x00,
-             0x00,
-             0x46);
+define_guid!(
+    IID_IUnknown = 0x00000000,
+    0x0000,
+    0x0000,
+    0xC0,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x46
+);
 
 #[repr(C)]
 pub struct IUnknown {
@@ -18,7 +24,7 @@ pub struct IUnknown {
 }
 
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[cfg_attr(rustfmt, rustfmt_skip)]
 pub struct IUnknownVtable {
     pub query_interface: extern "stdcall" fn(*const IUnknown,
@@ -26,16 +32,6 @@ pub struct IUnknownVtable {
                                              *mut RawComPtr) -> HRESULT,
     pub add_ref: extern "stdcall" fn(*const IUnknown) -> ULONG,
     pub release: extern "stdcall" fn(*const IUnknown) -> ULONG,
-}
-
-impl Clone for IUnknownVtable {
-    fn clone(&self) -> Self {
-        IUnknownVtable {
-            query_interface: self.query_interface,
-            add_ref: self.add_ref,
-            release: self.release,
-        }
-    }
 }
 
 impl IUnknown {
@@ -63,15 +59,39 @@ unsafe impl ComInterface for IUnknown {
     }
 }
 
-impl AsRef<IUnknown> for IUnknown {
-    fn as_ref(&self) -> &IUnknown {
-        self
-    }
-}
-
 // unsafe to implement because it implies the type can safely be cast to IUnknown
-pub unsafe trait ComInterface: AsRef<IUnknown> + Send + Sync {
+pub unsafe trait ComInterface: Send + Sync {
     type Vtable: Copy + Clone;
 
     fn iid() -> IID;
+
+    fn iunknown(&self) -> &IUnknown {
+        let result: *const IUnknown = self as *const _ as *const IUnknown;
+        unsafe { &*result }
+    }
+}
+
+pub trait Upcast: ComInterface {
+    type Target;
+    fn upcast(&self) -> &Self::Target;
+}
+
+fn query_interface<T: ComInterface, U: ComInterface>(unk: &T) -> Result<ComPtr<U>> {
+    let mut ptr: RawComPtr = ptr::null();
+
+    let rc = unsafe { unk.iunknown().query_interface(&U::iid(), &mut ptr) };
+
+    try!(rc.result());
+
+    unsafe { Ok(raw_to_comptr(ptr, true)) }
+}
+
+pub trait Cast: ComInterface {
+    fn cast<U: ComInterface>(&self) -> Result<ComPtr<U>>;
+}
+
+impl<T: ComInterface> Cast for T {
+    fn cast<U: ComInterface>(&self) -> Result<ComPtr<U>> {
+        query_interface(self)
+    }
 }

@@ -6,7 +6,9 @@ pub struct RefCount {
 
 impl RefCount {
     pub fn new(initial: u32) -> Self {
-        RefCount { counter: Mutex::new(initial) }
+        RefCount {
+            counter: Mutex::new(initial),
+        }
     }
 
     pub fn up(&self) -> u32 {
