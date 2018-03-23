@@ -5,5 +5,5 @@ authors = ["Daniël Louwrink <daniel.louwrink@gmail.com>"]
 
 [dependencies]
 libc = "0.2"
-bitflags = "0.8"
-error-chain = "0.10"
+bitflags = "1.0"
+error-chain = "0.11"

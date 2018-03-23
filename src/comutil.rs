@@ -22,7 +22,7 @@ extern "system" {
 }
 
 pub fn com_initialize() -> Result<()> {
-    let rc = unsafe { CoInitializeEx(ptr::null(), COINIT_MULTITHREADED) };
+    let rc = unsafe { CoInitializeEx(ptr::null(), COINIT::MULTITHREADED) };
     try!(rc.result());
 
     Ok(())
