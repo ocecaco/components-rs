@@ -1,11 +1,10 @@
-#![recursion_limit = "1024"]
-
 #[macro_use]
 extern crate bitflags;
 extern crate libc;
 
+extern crate failure;
 #[macro_use]
-extern crate error_chain;
+extern crate failure_derive;
 
 #[macro_use]
 pub mod macros;
@@ -22,12 +21,11 @@ pub use iunknown::*;
 pub use types::*;
 
 pub mod errors {
-    error_chain! {
-        errors {
-            ComCallFailed(result: ::HRESULT) {
-                description("COM call failed")
-                display("COM call failed: returned {}", result)
-            }
-        }
+    pub type Result<T> = ::std::result::Result<T, ComError>;
+
+    #[derive(Debug, Fail)]
+    #[fail(display = "COM call returned error: {}", result)]
+    pub struct ComError {
+        pub result: ::HRESULT,
     }
 }

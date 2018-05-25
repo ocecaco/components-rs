@@ -57,7 +57,7 @@ impl HRESULT {
         if *self == S_OK {
             Ok(())
         } else {
-            Err(ErrorKind::ComCallFailed(*self).into())
+            Err(ComError { result: *self })
         }
     }
 }
