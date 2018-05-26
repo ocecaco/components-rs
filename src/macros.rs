@@ -41,7 +41,7 @@ macro_rules! com_interface {
         #[derive(Copy, Clone)]
         pub struct $vtable {
             pub base: <$base_iface as $crate::ComInterface>::Vtable,
-            $(pub $func: extern "stdcall" fn(*const $iface, $($t),*) -> $rt),*
+            $(pub $func: extern "system" fn(*const $iface, $($t),*) -> $rt),*
         }
 
         $(#[$iface_attr])*
@@ -216,7 +216,7 @@ macro_rules! handle_functions {
         )*
     ) => {
         $(
-            extern "stdcall" fn $func(this: *const $iface $(, $i: $t)*) -> $rt {
+            extern "system" fn $func(this: *const $iface $(, $i: $t)*) -> $rt {
                 #[cfg_attr(feature = "cargo-clippy", allow(zero_ptr))]
                 let this = (this as usize - offset_of!($cls, $field)) as *const $cls;
                 let this = unsafe { &*this };

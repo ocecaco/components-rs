@@ -27,6 +27,7 @@ impl fmt::Display for HRESULT {
     }
 }
 
+#[repr(C)]
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct GUID {
     pub data1: u32,

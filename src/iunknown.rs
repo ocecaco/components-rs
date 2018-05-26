@@ -27,11 +27,11 @@ pub struct IUnknown {
 #[derive(Copy, Clone)]
 #[cfg_attr(rustfmt, rustfmt_skip)]
 pub struct IUnknownVtable {
-    pub query_interface: extern "stdcall" fn(*const IUnknown,
+    pub query_interface: extern "system" fn(*const IUnknown,
                                              *const IID,
                                              *mut RawComPtr) -> HRESULT,
-    pub add_ref: extern "stdcall" fn(*const IUnknown) -> ULONG,
-    pub release: extern "stdcall" fn(*const IUnknown) -> ULONG,
+    pub add_ref: extern "system" fn(*const IUnknown) -> ULONG,
+    pub release: extern "system" fn(*const IUnknown) -> ULONG,
 }
 
 impl IUnknown {
