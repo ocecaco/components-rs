@@ -18,7 +18,7 @@ pub unsafe fn com_memory_free(ptr: LPVOID) {
     CoTaskMemFree(ptr)
 }
 
-pub unsafe fn raw_to_comptr<T: ComInterface>(ptr: LPVOID, owned: bool) -> ComPtr<T> {
+pub unsafe fn raw_to_comptr<T: ComInterface>(ptr: RawComPtr, owned: bool) -> ComPtr<T> {
     let interface_ptr: *const T = ptr as *const T;
     let result = ComPtr::from_raw(interface_ptr);
     if !owned {
@@ -53,5 +53,5 @@ where
 
     try!(HRESULT(rc as u32).result());
 
-    unsafe { Ok(raw_to_comptr(ptr, true)) }
+    unsafe { Ok(raw_to_comptr(ptr as RawComPtr, true)) }
 }

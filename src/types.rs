@@ -50,8 +50,10 @@ pub type IID = GUID;
 pub type CLSID = GUID;
 
 use winapi::shared::guiddef;
-pub use winapi::shared::minwindef::LPVOID;
+pub(crate) use winapi::shared::minwindef::LPVOID;
+pub use winapi::shared::windef::HWND;
 pub use winapi::shared::wtypesbase::CLSCTX;
+pub use winapi::shared::wtypesbase::CLSCTX_LOCAL_SERVER;
 pub use winapi::shared::wtypesbase::ULONG;
 use winapi::um::unknwnbase::IUnknown;
 

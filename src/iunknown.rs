@@ -83,7 +83,7 @@ fn query_interface<T: ComInterface, U: ComInterface>(unk: &T) -> Result<ComPtr<U
 
     try!(rc.result());
 
-    unsafe { Ok(raw_to_comptr(ptr as LPVOID, true)) }
+    unsafe { Ok(raw_to_comptr(ptr, true)) }
 }
 
 pub trait Cast: ComInterface {
