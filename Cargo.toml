@@ -3,7 +3,7 @@ name = "components"
 version = "0.1.0"
 authors = ["Daniël Louwrink <daniel.louwrink@gmail.com>"]
 
-[dependencies]
+[target.'cfg(windows)'.dependencies]
 libc = "0.2"
 bitflags = "1.0"
 failure = "0.1"
