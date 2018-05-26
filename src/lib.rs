@@ -1,7 +1,5 @@
 #![cfg(windows)]
-#[macro_use]
-extern crate bitflags;
-extern crate libc;
+extern crate winapi;
 
 extern crate failure;
 #[macro_use]
@@ -12,10 +10,10 @@ pub mod macros;
 
 pub mod bstr;
 pub mod comptr;
-pub mod refcount;
-mod types;
 mod comutil;
 mod iunknown;
+pub mod refcount;
+mod types;
 
 pub use comutil::*;
 pub use iunknown::*;

@@ -77,13 +77,13 @@ pub trait Upcast: ComInterface {
 }
 
 fn query_interface<T: ComInterface, U: ComInterface>(unk: &T) -> Result<ComPtr<U>> {
-    let mut ptr: RawComPtr = ptr::null();
+    let mut ptr: RawComPtr = ptr::null_mut();
 
     let rc = unsafe { unk.iunknown().query_interface(&U::iid(), &mut ptr) };
 
     try!(rc.result());
 
-    unsafe { Ok(raw_to_comptr(ptr, true)) }
+    unsafe { Ok(raw_to_comptr(ptr as LPVOID, true)) }
 }
 
 pub trait Cast: ComInterface {

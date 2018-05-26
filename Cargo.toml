@@ -4,7 +4,6 @@ version = "0.1.0"
 authors = ["Daniël Louwrink <daniel.louwrink@gmail.com>"]
 
 [target.'cfg(windows)'.dependencies]
-libc = "0.2"
-bitflags = "1.0"
+winapi = { version = "0.3", features = ["oleauto", "combaseapi", "objbase"] }
 failure = "0.1"
 failure_derive = "0.1"

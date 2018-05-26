@@ -1,27 +1,24 @@
 use std::marker::PhantomData;
 use std::ptr;
 
-#[link(name = "oleaut32")]
-extern "system" {
-    fn SysAllocStringLen(s: *const u16, len: u32) -> *const u16;
-    fn SysFreeString(s: *const u16);
-}
+use winapi::shared::wtypes::BSTR;
+use winapi::um::oleauto::{SysAllocStringLen, SysFreeString};
 
 pub struct BString {
-    ptr: *const u16,
+    ptr: BSTR,
 }
 
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct BStr<'a> {
-    ptr: *const u16,
+    ptr: BSTR,
     phantom: PhantomData<&'a u16>,
 }
 
 impl<'a> BStr<'a> {
     pub fn null() -> BStr<'static> {
         BStr {
-            ptr: ptr::null(),
+            ptr: ptr::null_mut(),
             phantom: PhantomData,
         }
     }
