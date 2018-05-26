@@ -41,8 +41,15 @@ where
     } else {
         ptr::null()
     };
-    let rc =
-        unsafe { CoCreateInstance(clsid, outer as RawComPtr, cls_context, &U::iid(), &mut ptr) };
+    let rc = unsafe {
+        CoCreateInstance(
+            &clsid.to_native(),
+            outer as RawComPtr,
+            cls_context,
+            &U::iid().to_native(),
+            &mut ptr,
+        )
+    };
 
     try!(HRESULT(rc as u32).result());
 

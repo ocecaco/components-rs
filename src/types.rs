@@ -27,12 +27,32 @@ impl fmt::Display for HRESULT {
     }
 }
 
-pub use winapi::shared::guiddef::CLSID;
-pub use winapi::shared::guiddef::GUID;
-pub use winapi::shared::guiddef::IID;
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
+pub struct GUID {
+    pub data1: u32,
+    pub data2: u16,
+    pub data3: u16,
+    pub data4: [u8; 8],
+}
+
+impl GUID {
+    pub(crate) fn to_native(&self) -> guiddef::GUID {
+        guiddef::GUID {
+            Data1: self.data1,
+            Data2: self.data2,
+            Data3: self.data3,
+            Data4: self.data4,
+        }
+    }
+}
+
+pub type IID = GUID;
+pub type CLSID = GUID;
+
+use winapi::shared::guiddef;
 pub use winapi::shared::minwindef::LPVOID;
 pub use winapi::shared::wtypesbase::CLSCTX;
 pub use winapi::shared::wtypesbase::ULONG;
-pub use winapi::um::unknwnbase::IUnknown;
+use winapi::um::unknwnbase::IUnknown;
 
 pub type RawComPtr = *mut IUnknown;

@@ -4,20 +4,20 @@ macro_rules! define_guid {
     ($name:ident = $d1:expr, $d2:expr, $d3:expr, $($d4:expr),*) => (
         #[allow(non_upper_case_globals)]
         const $name: $crate::GUID = $crate::GUID {
-            Data1: $d1,
-            Data2: $d2,
-            Data3: $d3,
-            Data4: [$($d4),*],
+            data1: $d1,
+            data2: $d2,
+            data3: $d3,
+            data4: [$($d4),*],
         };
     );
 
     (pub $name:ident = $d1:expr, $d2:expr, $d3:expr, $($d4:expr),*) => (
         #[allow(non_upper_case_globals)]
         pub const $name: $crate::GUID = $crate::GUID {
-            Data1: $d1,
-            Data2: $d2,
-            Data3: $d3,
-            Data4: [$($d4),*],
+            data1: $d1,
+            data2: $d2,
+            data3: $d3,
+            data4: [$($d4),*],
         };
     );
 }
