@@ -1,4 +1,3 @@
-// TODO: license and attribution
 #[macro_export]
 macro_rules! define_guid {
     ($name:ident = $d1:expr, $d2:expr, $d3:expr, $($d4:expr),*) => (

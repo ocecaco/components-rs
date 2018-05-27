@@ -1,7 +1,10 @@
 [package]
 name = "components"
+description = "Library for interacting with COM (Component Object Model) on Windows."
 version = "0.1.0"
 authors = ["Daniël Louwrink <daniel.louwrink@gmail.com>"]
+license = "MIT"
+repository = "https://github.com/ocecaco/components-rs"
 
 [target.'cfg(windows)'.dependencies]
 winapi = { version = "0.3", features = ["oleauto", "combaseapi", "objbase", "windef"] }
