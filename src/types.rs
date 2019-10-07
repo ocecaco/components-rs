@@ -1,6 +1,6 @@
 #![allow(non_camel_case_types)]
 
-use errors::*;
+use crate::errors::*;
 use std::fmt;
 
 #[must_use]

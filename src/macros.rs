@@ -80,7 +80,7 @@ macro_rules! com_interface {
 }
 
 #[macro_export]
-macro_rules! offset_of {
+macro_rules! __impl_offset_of {
     ($t:ty, $f:ident) => {
         unsafe { &(*(0 as *const $t)).$f as *const _ as usize }
     };
@@ -102,16 +102,16 @@ macro_rules! coclass {
         $(
             mod $prefix {
                 use super::*;
-                coclass_interface!($cls, $field, $($iface_definition)*);
+                $crate::__impl_coclass_interface!($cls, $field, $($iface_definition)*);
 
-                generate_vtable!($vtable_name, $($iface_definition)*);
+                $crate::__impl_generate_vtable!($vtable_name, $($iface_definition)*);
             }
         )*
     }
 }
 
 #[macro_export]
-macro_rules! generate_vtable {
+macro_rules! __impl_generate_vtable {
     (
         $vtable_name:ident,
 
@@ -120,7 +120,7 @@ macro_rules! generate_vtable {
             $($rest:tt)*
         }
     ) => {
-        pub static $vtable_name: $vtable = coclass_vtable!(
+        pub static $vtable_name: $vtable = $crate::__impl_coclass_vtable!(
             interface $iface {
                 vtable: $vtable,
                 $($rest)*
@@ -130,7 +130,7 @@ macro_rules! generate_vtable {
 }
 
 #[macro_export]
-macro_rules! coclass_vtable {
+macro_rules! __impl_coclass_vtable {
     (
         interface $iface:ident {
             vtable: $vtable:ident,
@@ -143,7 +143,7 @@ macro_rules! coclass_vtable {
         }
     ) => {
         $vtable {
-            base: coclass_vtable!(
+            base: $crate::__impl_coclass_vtable!(
                 interface $base {
                     $($base_definition)*
                 }
@@ -167,7 +167,7 @@ macro_rules! coclass_vtable {
 }
 
 #[macro_export]
-macro_rules! coclass_interface {
+macro_rules! __impl_coclass_interface {
     (
         $cls:ident, $field:ident,
 
@@ -179,9 +179,9 @@ macro_rules! coclass_interface {
             $($fs:tt)*
         }
     ) => {
-        handle_functions!($cls, $iface, $field, $($fs)*);
+        $crate::__impl_handle_functions!($cls, $iface, $field, $($fs)*);
 
-        coclass_interface! {
+        $crate::__impl_coclass_interface! {
             $cls,
             $field,
 
@@ -199,12 +199,12 @@ macro_rules! coclass_interface {
             $($fs:tt)*
         }
     ) => {
-        handle_functions!($cls, $iface, $field, $($fs)*);
+        $crate::__impl_handle_functions!($cls, $iface, $field, $($fs)*);
     }
 }
 
 #[macro_export]
-macro_rules! handle_functions {
+macro_rules! __impl_handle_functions {
     (
         $cls:ident,
         $iface:ident,
@@ -217,7 +217,7 @@ macro_rules! handle_functions {
         $(
             extern "system" fn $func(this: *const $iface $(, $i: $t)*) -> $rt {
                 #[cfg_attr(feature = "cargo-clippy", allow(zero_ptr))]
-                let this = (this as usize - offset_of!($cls, $field)) as *const $cls;
+                let this = (this as usize - $crate::__impl_offset_of!($cls, $field)) as *const $cls;
                 let this = unsafe { &*this };
 
                 #[allow(unused_unsafe)]

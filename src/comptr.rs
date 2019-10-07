@@ -1,4 +1,4 @@
-use iunknown::ComInterface;
+use crate::iunknown::ComInterface;
 use std::ops::Deref;
 use std::ptr;
 

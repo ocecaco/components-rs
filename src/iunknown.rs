@@ -1,8 +1,8 @@
-use comptr::*;
-use comutil::*;
-use errors::*;
+use crate::comptr::*;
+use crate::comutil::*;
+use crate::errors::*;
+use crate::types::*;
 use std::ptr;
-use types::*;
 
 define_guid!(
     IID_IUnknown = 0x00000000,

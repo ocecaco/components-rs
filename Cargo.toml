@@ -3,6 +3,7 @@ name = "components"
 description = "Library for interacting with COM (Component Object Model) on Windows."
 version = "0.1.0"
 authors = ["Daniël Louwrink <daniel.louwrink@gmail.com>"]
+edition = "2018"
 license = "MIT"
 repository = "https://github.com/ocecaco/components-rs"
 

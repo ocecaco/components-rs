@@ -1,9 +1,4 @@
 #![cfg(windows)]
-extern crate winapi;
-
-extern crate failure;
-#[macro_use]
-extern crate failure_derive;
 
 #[macro_use]
 pub mod macros;
@@ -20,11 +15,13 @@ pub use iunknown::*;
 pub use types::*;
 
 pub mod errors {
+    use failure::Fail;
+
     pub type Result<T> = ::std::result::Result<T, ComError>;
 
     #[derive(Debug, Fail)]
     #[fail(display = "COM call returned error: {}", result)]
     pub struct ComError {
-        pub result: ::HRESULT,
+        pub result: crate::HRESULT,
     }
 }

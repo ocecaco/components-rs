@@ -1,8 +1,8 @@
-use comptr::ComPtr;
-use errors::*;
-use iunknown::{ComInterface, IUnknown};
+use crate::comptr::ComPtr;
+use crate::errors::*;
+use crate::iunknown::{ComInterface, IUnknown};
+use crate::types::*;
 use std::ptr;
-use types::*;
 
 use winapi::um::combaseapi::{CoCreateInstance, CoInitializeEx, CoTaskMemFree};
 use winapi::um::objbase::COINIT_MULTITHREADED;
