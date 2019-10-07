@@ -1,7 +1,7 @@
 [package]
 name = "components"
 description = "Library for interacting with COM (Component Object Model) on Windows."
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Daniël Louwrink <daniel.louwrink@gmail.com>"]
 edition = "2018"
 license = "MIT"
@@ -10,4 +10,3 @@ repository = "https://github.com/ocecaco/components-rs"
 [target.'cfg(windows)'.dependencies]
 winapi = { version = "0.3", features = ["oleauto", "combaseapi", "objbase", "windef"] }
 failure = "0.1"
-failure_derive = "0.1"
