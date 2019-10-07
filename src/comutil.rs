@@ -9,7 +9,7 @@ use winapi::um::objbase::COINIT_MULTITHREADED;
 
 pub fn com_initialize() -> Result<()> {
     let rc = unsafe { CoInitializeEx(ptr::null_mut(), COINIT_MULTITHREADED) };
-    try!(HRESULT(rc as u32).result());
+    HRESULT(rc as u32).result()?;
 
     Ok(())
 }
@@ -51,7 +51,7 @@ where
         )
     };
 
-    try!(HRESULT(rc as u32).result());
+    HRESULT(rc as u32).result()?;
 
     unsafe { Ok(raw_to_comptr(ptr as RawComPtr, true)) }
 }

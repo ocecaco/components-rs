@@ -81,7 +81,7 @@ fn query_interface<T: ComInterface, U: ComInterface>(unk: &T) -> Result<ComPtr<U
 
     let rc = unsafe { unk.iunknown().query_interface(&U::iid(), &mut ptr) };
 
-    try!(rc.result());
+    rc.result()?;
 
     unsafe { Ok(raw_to_comptr(ptr, true)) }
 }
